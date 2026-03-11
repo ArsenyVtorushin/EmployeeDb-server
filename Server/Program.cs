@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Listener listener = new Listener();
+            listener.Run();
         }
     }
 }
