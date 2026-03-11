@@ -11,7 +11,7 @@ using Server.Repo;
 namespace Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260310155847_Employee_migration")]
+    [Migration("20260311200603_Employee_migration")]
     partial class Employee_migration
     {
         /// <inheritdoc />
