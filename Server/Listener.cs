@@ -1,4 +1,6 @@
-﻿using Server.Repo;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Server.Repo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,23 +8,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Server
 {
     public class Listener
     {
-        public async void Run()
+        public async Task RunAsync(CancellationToken token = default)
         {
             TcpListener server = new TcpListener(IPAddress.Any, 8080);
             server.Start();
             Console.WriteLine("Сервер запущен, ожидает подключения...");
 
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 var client = await server.AcceptTcpClientAsync();
                 Console.WriteLine("Клиент подключился.");
-
                 _ = HandleClientAsync(client);
             }
         }
@@ -40,9 +40,8 @@ namespace Server
                 if (message == "GetEmployees")
                 {
                     var employees = DatabaseControl.GetEmployeesList();
-                    string jsonResponse = JsonConvert.SerializeObject(employees, Formatting.Indented);
-
-                    byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
+                    string json = JsonConvert.SerializeObject(employees, Formatting.Indented);
+                    byte[] responseBytes = Encoding.UTF8.GetBytes(json);
                     await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
                     Console.WriteLine("Ответ клиенту отправлен.");
                 }
